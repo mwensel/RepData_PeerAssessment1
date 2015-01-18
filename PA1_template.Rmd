@@ -1,94 +1,25 @@
 ---
-title: "Peer Assignment 1- R Markdown"
-output: html_document
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
 ---
 
-The first chunk of code required to begin the data analysis loads the required .csv file and 
-processes it into a form suitable for analysis. Relevant code is shown below.
-```{r}
-data<-read.csv("activity.csv")
-```
 
-A quick analysis of the loaded data shows a data.frame consisting of 17568 observation of 3 variables, as produced by the "str" function. 
+## Loading and preprocessing the data
 
-```{r}
-str(data)
-```
 
-To create the histogram and find mean and median by day the plyr package is called, using the 
-function ddply. Here a data.frame is returned, with the sum of the number of steps by day being the output. A histogram of number of steps is created and mean and median number of steps are 
-calculated. 
 
-```{r}
-library(plyr)
-data2<-ddply(data, "date", function(df)sum(df$steps, na.rm=T))
-hist(data2$V1, xlab="steps", col="red", main="Histogram of steps per day", breaks=10)
-mean(data2$V1, na.rm=T)
-median(data2$V1, na.rm=T)
-```
+## What is mean total number of steps taken per day?
 
-To create a time-series plot the ddply package is used in a similar manner, this time grouping
-by by interval instead of by date. Note that NA's must be removed in order to obtain proper 
-results. Note that "date" has 61 factor levels, so this is the number that we should use to obtain averages. Maxsteps is equal to the interval with the maximum number of steps.
 
-```{r}
-data3<-ddply(data, "interval", function(df)sum(df$steps, na.rm=T))
 
-plot(data3$interval, (data3$V1)/61, type="l", main="Time-Series Plot of Activity by Time-of-day", xlab="Time of Day", ylab="Average Steps")
+## What is the average daily activity pattern?
 
-maxsteps<-max(data3$V1)/61
-maxsteps
-```
 
-Note that some data is missing values. The number of missing values is reported by the following
-R code.
 
-```{r}
+## Imputing missing values
 
-sum(is.na(data$steps))
 
-```
 
-Missing values will simply be imputed by the mean number of steps per 5-minute interval, 
-with no discrimination between separate intervals. This should give a more accurate summation
-of total activity but may lead to introduction of steps where they are unlikely,
-such as early in the morning. Note that there are 288 different intervals, used in calculating
-steps per interval. Total summation of steps is divided first by number of days (61) then 
-by number of intervals (288). This average number of steps per period is then assigned to values
-that were originally NA.
-
-```{r}
-av<-sum(data3$V1)/61/288
-av
-data4<-data
-data4[is.na(data4)]<-av
-```
-
-A new histogram is the created using data from the imputed data frame. 
-
-```{r}
-data5<-ddply(data4, "date", function(df)sum(df$steps, na.rm=T))
-hist(data5$V1, xlab="steps", col="red", main="Histogram of steps per day", breaks=10)
-mean(data5$V1, na.rm=T)
-median(data5$V1, na.rm=T)
-```
-
-Note that the mean has increased, while the median has remained the same. The total daily number of steps has increased.
-
-The weekdays function is now used on the new data to create a vector of weekdays corresponding to 
-the date in the data.
-
-```{r}
-weekvec<-weekdays(as.Date(data4$date))
-for(i in 1:length(weekvec)){
-      if (weekvec[i]=="Monday"||weekvec[i]=="Tuesday"||weekvec[i]=="Wednesday"||weekvec[i]=="Thursday"||weekvec[i]=="Friday"
-          ) weekvec[i]<-"Weekday"
-      else weekvec[i]<-"Weekend"
-}
-data4<-cbind(data4, weekvec)
-head(data4)
-
-```
-
-Ran out of time to complete this assignment as of now, will finish in later commit. 
-
+## Are there differences in activity patterns between weekdays and weekends?
