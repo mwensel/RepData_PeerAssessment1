@@ -1,6 +1,8 @@
 ---
 title: "Peer Assignment 1- R Markdown"
-output: html_document
+output:
+  html_document:
+    fig_caption: yes
 ---
 
 The first chunk of code required to begin the data analysis loads the required .csv file and 
